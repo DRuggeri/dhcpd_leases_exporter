@@ -62,8 +62,8 @@ Flags:
 This collector counts the number of leases PER UNIQUE IP found in dhcpd.leases. This means that if an IP was leased to `client X`, but is now leased to `client Y`, there will be only one entry counted (the most recent one). This is in line with how dhcpd reads the file.
 
 ```
-  dhcpd_leases_stats_valid_leases - The number of leases in dhcpd.leases that have not yet expired.
-  dhcpd_leases_stats_expired_leases - The number of leases in dhcpd.leases that have expired.
+  dhcpd_leases_stats_valid - The number of leases in dhcpd.leases that have not yet expired.
+  dhcpd_leases_stats_expired - The number of leases in dhcpd.leases that have expired.
   dhcpd_leases_stats_count - The number of leases in dhcpd.leases
   dhcpd_leases_stats_scrapes_total - Total number of scrapes for stats.
   dhcpd_leases_stats_scrape_errors_total - Total number of scrapes errors for stats.

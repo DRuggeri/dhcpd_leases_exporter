@@ -26,7 +26,7 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Subsystem: "stats",
-			Name:      "valid_leases",
+			Name:      "valid",
 			Help:      "The number of leases in dhcpd.leases that have not yet expired.",
 		},
 	)
@@ -35,7 +35,7 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Subsystem: "stats",
-			Name:      "expired_leases",
+			Name:      "expired",
 			Help:      "The number of leases in dhcpd.leases that have expired.",
 		},
 	)
