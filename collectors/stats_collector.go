@@ -123,6 +123,8 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 func (c *StatCollector) Collect(ch chan<- prometheus.Metric) {
 	var begun = time.Now()
 
+	c.info.Read()
+
 	c.validMetric.Set(float64(c.info.Valid))
 	c.validMetric.Collect(ch)
 
