@@ -1,6 +1,6 @@
 # ISC dhcpd Leases Prometheus Exporter
 
-A [Prometheus](https://prometheus.io) exporter for the ISC dhcpd server. This exporter consumes the `dhcpd.leases` file which is periodically written by the dameon. It is based on the [node_exporter](https://github.com/prometheus/node_exporter) and [cf_exporter](https://github.com/bosh-prometheus/cf_exporter) projects.
+A [Prometheus](https://prometheus.io) exporter for the ISC dhcpd server. This exporter consumes the `dhcpd.leases` file ([man page](https://linux.die.net/man/5/dhcpd.leases)) which is periodically written by the dameon. It is based on the [node_exporter](https://github.com/prometheus/node_exporter) and [cf_exporter](https://github.com/bosh-prometheus/cf_exporter) projects.
 
 ## Installation
 
@@ -19,6 +19,12 @@ Using the standard `go install` (you must have [Go](https://golang.org/) already
 ```bash
 $ go install github.com/DRuggeri/dhcpd_leases_exporter
 $ dhcpd_leases_exporter <flags>
+```
+
+### With Docker
+```bash
+docker build -t dhcpd_leases_exporter .
+docker run -d -p 9198:9198 -v /var/lib/dhcp/dhcpd.leases:/var/lib/dhcpd/dhcpd.leases:ro dhcpd_leases_exporter"
 ```
 
 ## Usage
