@@ -48,8 +48,6 @@ Flags:
                           Path under which to expose Prometheus metrics ($DHCPD_LEASES_EXPORTER_WEB_TELEMETRY_PATH)
       --web.auth.username=WEB.AUTH.USERNAME
                           Username for web interface basic auth ($DHCPD_LEASES_EXPORTER_WEB_AUTH_USERNAME)
-      --web.auth.password=WEB.AUTH.PASSWORD
-                          Password for web interface basic auth ($DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD)
       --web.tls.cert_file=WEB.TLS.CERT_FILE
                           Path to a file that contains the TLS certificate (PEM format). If the certificate is signed by a certificate authority, the file should be the concatenation of the server's certificate, any intermediates, and the CA's certificate
                           ($DHCPD_LEASES_EXPORTER_WEB_TLS_CERTFILE)
@@ -68,11 +66,11 @@ Flags:
 This collector counts the number of leases PER UNIQUE IP found in dhcpd.leases. This means that if an IP was leased to `client X`, but is now leased to `client Y`, there will be only one entry counted (the most recent one). This is in line with how dhcpd reads the file.
 
 ```
-  dhcpd_leases_stats_valid - The number of leases in dhcpd.leases that have not yet expired.
-  dhcpd_leases_stats_expired - The number of leases in dhcpd.leases that have expired.
+  dhcpd_leases_stats_valid - The number of leases in dhcpd.leases that have not yet expired
+  dhcpd_leases_stats_expired - The number of leases in dhcpd.leases that have xpired
   dhcpd_leases_stats_count - The number of leases in dhcpd.leases
-  dhcpd_leases_stats_scrapes_total - Total number of scrapes for stats.
-  dhcpd_leases_stats_scrape_errors_total - Total number of scrapes errors for stats.
+  dhcpd_leases_stats_scrapes_total - Total number of scrapes
+  dhcpd_leases_stats_scrape_errors_total - Total number of scrapes errors
   dhcpd_leases_stats_last_scrape_error - Whether the last scrape of stats resulted in an error (1 for error, 0 for success).
   dhcpd_leases_stats_last_scrape_timestamp - Number of seconds since 1970 since last scrape of stat metrics.
 ```

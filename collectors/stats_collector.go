@@ -1,70 +1,52 @@
 package collectors
 
 import (
+	"github.com/DRuggeri/dhcpdleasesreader"
 	"github.com/prometheus/client_golang/prometheus"
 	"time"
-	"github.com/DRuggeri/dhcpdleasesreader"
 )
 
 type StatCollector struct {
-	namespace   string
-	validMetric prometheus.Gauge
-	expiredMetric prometheus.Gauge
-	countMetric prometheus.Gauge
-	modTimeMetric prometheus.Gauge
-	info       *dhcpdleasesreader.DhcpdInfo
+	validDesc   *prometheus.Desc
+	expiredDesc *prometheus.Desc
+	countDesc   *prometheus.Desc
+	modTimeDesc *prometheus.Desc
+	info        *dhcpdleasesreader.DhcpdInfo
 
-	scrapesTotalMetric              prometheus.Counter
-	scrapeErrorsTotalMetric         prometheus.Counter
-	lastScrapeErrorMetric           prometheus.Gauge
-	lastScrapeTimestampMetric       prometheus.Gauge
-	lastScrapeDurationSecondsMetric prometheus.Gauge
+	scrapesTotalMetric      prometheus.Counter
+	scrapeErrorsTotalMetric prometheus.Counter
+	lastScrapeErrorDesc     *prometheus.Desc
+	lastScrapeTimestampDesc *prometheus.Desc
+	lastScrapeDurationDesc  *prometheus.Desc
 }
 
 func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *StatCollector {
-	validMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "valid",
-			Help:      "The number of leases in dhcpd.leases that have not yet expired.",
-		},
+	validDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "valid"),
+		"The number of leases in dhcpd.leases that have not yet expired",
+		nil, nil,
 	)
 
-	expiredMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "expired",
-			Help:      "The number of leases in dhcpd.leases that have expired.",
-		},
+	expiredDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "expired"),
+		"The number of leases in dhcpd.leases that have xpired",
+		nil, nil,
 	)
 
-	countMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "count",
-			Help:      "The number of leases in dhcpd.leases",
-		},
+	countDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "count"),
+		"The number of leases in dhcpd.leases",
+		nil, nil,
 	)
 
-	modTimeMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "filetime",
-			Help:      "The file timestamp in seconds since epoch of the dhcpd.leases file",
-		},
+	modTimeDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "filetime"),
+		"The file timestamp in seconds since epoch of the dhcpd.leases file",
+		nil, nil,
 	)
-
 
 	scrapesTotalMetric := prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Subsystem: "stats",
 			Name:      "scrapes_total",
-			Help:      "Total number of scrapes for stats.",
+			Help:      "Total number of scrapes",
 		},
 	)
 
@@ -73,92 +55,72 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 			Namespace: namespace,
 			Subsystem: "stats",
 			Name:      "scrape_errors_total",
-			Help:      "Total number of scrapes errors for stats.",
+			Help:      "Total number of scrapes errors",
 		},
 	)
 
-	lastScrapeErrorMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "last_scrape_error",
-			Help:      "Whether the last scrape of stats resulted in an error (1 for error, 0 for success).",
-		},
+	lastScrapeErrorDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "last_scrape_error"),
+		"Whether the last scrape of stats resulted in an error (1 for error, 0 for success).",
+		nil, nil,
 	)
 
-	lastScrapeTimestampMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "last_scrape_timestamp",
-			Help:      "Number of seconds since 1970 since last scrape of stat metrics.",
-		},
+	lastScrapeTimestampDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "last_scrape_timestamp"),
+		"Number of seconds since 1970 since last scrape of stat metrics.",
+		nil, nil,
 	)
 
-	lastScrapeDurationSecondsMetric := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Namespace: namespace,
-			Subsystem: "stats",
-			Name:      "last_scrape_duration_seconds",
-			Help:      "Duration of the last scrape of stats.",
-		},
+	lastScrapeDurationDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "last_scrape_duration_seconds"),
+		"Number of seconds since 1970 since last scrape of stat metrics.",
+		nil, nil,
 	)
 
 	return &StatCollector{
-		validMetric: validMetric,
-		expiredMetric: expiredMetric,
-		countMetric: countMetric,
-		modTimeMetric: modTimeMetric,
-		info: info,
+		validDesc:   validDesc,
+		expiredDesc: expiredDesc,
+		countDesc:   countDesc,
+		modTimeDesc: modTimeDesc,
+		info:        info,
 
-		namespace:   namespace,
-		scrapesTotalMetric:              scrapesTotalMetric,
-		scrapeErrorsTotalMetric:         scrapeErrorsTotalMetric,
-		lastScrapeErrorMetric:           lastScrapeErrorMetric,
-		lastScrapeTimestampMetric:       lastScrapeTimestampMetric,
-		lastScrapeDurationSecondsMetric: lastScrapeDurationSecondsMetric,
+		scrapesTotalMetric:      scrapesTotalMetric,
+		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,
+		lastScrapeErrorDesc:     lastScrapeErrorDesc,
+		lastScrapeTimestampDesc: lastScrapeTimestampDesc,
+		lastScrapeDurationDesc:  lastScrapeDurationDesc,
 	}
 }
 
 func (c *StatCollector) Collect(ch chan<- prometheus.Metric) {
 	var begun = time.Now()
+	err_num := 0
 
+	/* TODO: Surface read errors through this function */
 	c.info.Read()
 
-	c.validMetric.Set(float64(c.info.Valid))
-	c.validMetric.Collect(ch)
-
-	c.expiredMetric.Set(float64(c.info.Expired))
-	c.expiredMetric.Collect(ch)
-
-	c.countMetric.Set(float64(len(c.info.Leases)))
-	c.countMetric.Collect(ch)
-
-	c.modTimeMetric.Set(float64(c.info.ModTime.Unix()))
-	c.modTimeMetric.Collect(ch)
-
-	c.scrapeErrorsTotalMetric.Collect(ch)
-
 	c.scrapesTotalMetric.Inc()
-	c.scrapesTotalMetric.Collect(ch)
+	if err_num != 0 {
+		c.scrapeErrorsTotalMetric.Inc()
+	}
 
-	c.lastScrapeErrorMetric.Set(0)
-	c.lastScrapeErrorMetric.Collect(ch)
+	ch <- prometheus.MustNewConstMetric(c.validDesc, prometheus.GaugeValue, float64(c.info.Valid))
+	ch <- prometheus.MustNewConstMetric(c.expiredDesc, prometheus.GaugeValue, float64(c.info.Expired))
+	ch <- prometheus.MustNewConstMetric(c.countDesc, prometheus.GaugeValue, float64(len(c.info.Leases)))
+	ch <- prometheus.MustNewConstMetric(c.modTimeDesc, prometheus.GaugeValue, float64(c.info.ModTime.Unix()))
 
-	c.lastScrapeTimestampMetric.Set(float64(time.Now().Unix()))
-	c.lastScrapeTimestampMetric.Collect(ch)
-
-	c.lastScrapeDurationSecondsMetric.Set(time.Since(begun).Seconds())
-	c.lastScrapeDurationSecondsMetric.Collect(ch)
+	ch <- c.scrapesTotalMetric
+	ch <- c.scrapeErrorsTotalMetric
+	ch <- prometheus.MustNewConstMetric(c.lastScrapeErrorDesc, prometheus.GaugeValue, float64(err_num))
+	ch <- prometheus.MustNewConstMetric(c.lastScrapeTimestampDesc, prometheus.GaugeValue, float64(time.Now().Unix()))
+	ch <- prometheus.MustNewConstMetric(c.lastScrapeDurationDesc, prometheus.GaugeValue, time.Since(begun).Seconds())
 }
 
 func (c *StatCollector) Describe(ch chan<- *prometheus.Desc) {
-	c.validMetric.Describe(ch)
-	c.expiredMetric.Describe(ch)
-	c.countMetric.Describe(ch)
+	ch <- c.validDesc
+	ch <- c.expiredDesc
+	ch <- c.countDesc
+
 	c.scrapesTotalMetric.Describe(ch)
 	c.scrapeErrorsTotalMetric.Describe(ch)
-	c.lastScrapeErrorMetric.Describe(ch)
-	c.lastScrapeTimestampMetric.Describe(ch)
-	c.lastScrapeDurationSecondsMetric.Describe(ch)
+	ch <- c.lastScrapeErrorDesc
+	ch <- c.lastScrapeTimestampDesc
+	ch <- c.lastScrapeDurationDesc
 }

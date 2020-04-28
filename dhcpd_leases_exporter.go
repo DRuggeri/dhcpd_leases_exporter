@@ -41,10 +41,7 @@ var (
 	authUsername = kingpin.Flag(
 		"web.auth.username", "Username for web interface basic auth ($DHCPD_LEASES_EXPORTER_WEB_AUTH_USERNAME)",
 	).Envar("DHCPD_LEASES_EXPORTER_WEB_AUTH_USERNAME").String()
-
-	authPassword = kingpin.Flag(
-		"web.auth.password", "Password for web interface basic auth ($DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD)",
-	).Envar("DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD").String()
+	authPassword = ""
 
 	tlsCertFile = kingpin.Flag(
 		"web.tls.cert_file", "Path to a file that contains the TLS certificate (PEM format). If the certificate is signed by a certificate authority, the file should be the concatenation of the server's certificate, any intermediates, and the CA's certificate ($DHCPD_LEASES_EXPORTER_WEB_TLS_CERTFILE)",
@@ -84,11 +81,11 @@ func (h *basicAuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func prometheusHandler() http.Handler {
 	handler := promhttp.Handler()
 
-	if *authUsername != "" && *authPassword != "" {
+	if *authUsername != "" && authPassword != "" {
 		handler = &basicAuthHandler{
 			handler:  promhttp.Handler().ServeHTTP,
 			username: *authUsername,
-			password: *authPassword,
+			password: authPassword,
 		}
 	}
 
@@ -138,6 +135,7 @@ func main() {
 
 	log.Infoln("Starting dhcpd_leases_exporter", version.Info())
 	log.Infoln("Build context", version.BuildContext())
+	authPassword = os.Getenv("DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD")
 
 	var collectorsFilters []string
 	if *filterCollectors != "" {
