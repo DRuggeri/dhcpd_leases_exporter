@@ -24,7 +24,7 @@ $ dhcpd_leases_exporter <flags>
 ### With Docker
 ```bash
 docker build -t dhcpd_leases_exporter .
-docker run -d -p 9198:9198 -v /var/lib/dhcp/dhcpd.leases:/var/lib/dhcpd/dhcpd.leases:ro dhcpd_leases_exporter"
+docker run -d -p 9198:9198 -v /var/lib/dhcp:/var/lib/dhcpd:ro dhcpd_leases_exporter"
 ```
 
 ## Usage
