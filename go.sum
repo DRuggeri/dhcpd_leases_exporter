@@ -2,6 +2,8 @@ github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200424235359-51abd400c143 h1:vXnT
 github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200424235359-51abd400c143/go.mod h1:Jd+pp3+TuKIE4DV5tmyG+Y5aCJ1LsPoKZeIhPgD2sic=
 github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200425005127-406ce3ea54fa h1:j3nlIBdKX1JLRr0Nvb/rPgu3FVSEYbccHt+I9F995Mg=
 github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200425005127-406ce3ea54fa/go.mod h1:Jd+pp3+TuKIE4DV5tmyG+Y5aCJ1LsPoKZeIhPgD2sic=
+github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200429162702-e7cdbd38d88f h1:InwXdpI0oq9nKcCIv22ZmlxRh8uXdECDWbAQic9qq80=
+github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200429162702-e7cdbd38d88f/go.mod h1:Jd+pp3+TuKIE4DV5tmyG+Y5aCJ1LsPoKZeIhPgD2sic=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
