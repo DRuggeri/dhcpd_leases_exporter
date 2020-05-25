@@ -7,8 +7,8 @@ import (
 )
 
 type leaseCollector struct {
-	activeDesc   *prometheus.Desc
-	info        *dhcpdleasesreader.DhcpdInfo
+	activeDesc *prometheus.Desc
+	info       *dhcpdleasesreader.DhcpdInfo
 
 	scrapesTotalMetric      prometheus.Counter
 	scrapeErrorsTotalMetric prometheus.Counter
@@ -57,8 +57,8 @@ func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *lea
 	)
 
 	return &leaseCollector{
-		activeDesc:   activeDesc,
-                info:        info,
+		activeDesc: activeDesc,
+		info:       info,
 
 		scrapesTotalMetric:      scrapesTotalMetric,
 		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,
