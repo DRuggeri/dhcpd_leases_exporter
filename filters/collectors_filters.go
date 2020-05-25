@@ -8,6 +8,7 @@ import (
 
 const (
 	StatsCollector = "Stats"
+	LeaseCollector = "Leases"
 )
 
 type CollectorsFilter struct {
@@ -21,6 +22,8 @@ func NewCollectorsFilter(filters []string) (*CollectorsFilter, error) {
 		switch strings.Trim(collectorName, " ") {
 		case StatsCollector:
 			collectorsEnabled[StatsCollector] = true
+		case LeaseCollector:
+			collectorsEnabled[LeaseCollector] = true
 		default:
 			return &CollectorsFilter{}, errors.New(fmt.Sprintf("Collector filter `%s` is not supported", collectorName))
 		}

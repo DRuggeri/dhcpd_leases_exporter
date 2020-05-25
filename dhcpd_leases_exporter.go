@@ -23,7 +23,7 @@ var (
 	).Envar("DHCPD_LEASES_EXPORTER_LEASES_FILE").Default("/var/lib/dhcp/dhcpd.leases").String()
 
 	filterCollectors = kingpin.Flag(
-		"filter.collectors", "Comma separated collectors to enable (Stats) ($DHCPD_LEASES_EXPORTER_FILTER_COLLECTORS)",
+		"filter.collectors", "Comma separated collectors to enable (Stats,Leases) ($DHCPD_LEASES_EXPORTER_FILTER_COLLECTORS)",
 	).Envar("DHCPD_LEASES_EXPORTER_FILTER_COLLECTORS").Default("Stats").String()
 
 	metricsNamespace = kingpin.Flag(
@@ -130,6 +130,13 @@ func main() {
 		statsCollector.Describe(out)
 		close(out)
 
+		fmt.Println("Leases")
+		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, info)
+		out = make(chan *prometheus.Desc)
+		go eatOutput(out)
+		leasesCollector.Describe(out)
+		close(out)
+
 		os.Exit(0)
 	}
 
@@ -154,6 +161,15 @@ func main() {
 			os.Exit(1)
 		}
 		prometheus.MustRegister(statsCollector)
+	}
+
+	if collectorsFilter.Enabled(filters.LeaseCollector) {
+		activeCollector := collectors.NewLeaseCollector(*metricsNamespace, info)
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		prometheus.MustRegister(activeCollector)
 	}
 
 	handler := prometheusHandler()

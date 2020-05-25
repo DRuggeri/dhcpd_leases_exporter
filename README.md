@@ -38,7 +38,7 @@ Flags:
   -h, --help              Show context-sensitive help (also try --help-long and --help-man).
       --dhcpd.leases="/var/lib/dhcp/dhcpd.leases"
                           Path of the dhcpd.leases file. Defaults to '/var/lib/dhcp/dhcpd.leases' ($DHCPD_LEASES_EXPORTER_LEASES_FILE)
-      --filter.collectors="Stats"
+      --filter.collectors="Stats,Leases"
                           Comma separated collectors to enable (Stats) ($DHCPD_LEASES_EXPORTER_FILTER_COLLECTORS)
       --metrics.namespace="dhcpd_leases"
                           Metrics Namespace ($DHCPD_LEASES_EXPORTER_METRICS_NAMESPACE)
@@ -73,6 +73,16 @@ This collector counts the number of leases PER UNIQUE IP found in dhcpd.leases. 
   dhcpd_leases_stats_scrape_errors_total - Total number of scrapes errors
   dhcpd_leases_stats_last_scrape_error - Whether the last scrape of stats resulted in an error (1 for error, 0 for success).
   dhcpd_leases_stats_last_scrape_timestamp - Number of seconds since 1970 since last scrape of stat metrics.
+```
+
+### Leases
+This collector will create a vector gague for each client with an active DHCP lease found in dhcpd.leases. Because this collector may produce tons of short-lived vectors depending on how busy DHCPD is, it is disabled by default
+```
+  dhcpd_leases_active_client - The number of leases in dhcpd.leases that have not yet expired
+  dhcpd_leases_active_scrapes_total - Total number of scrapes
+  dhcpd_leases_active_scrape_errors_total - Total number of scrapes errors
+  dhcpd_leases_active_last_scrape_error - Whether the last scrape resulted in an error (1 for error, 0 for success).
+  dhcpd_leases_active_last_scrape_timestamp - Number of seconds since 1970 since last scrape.
 ```
 
 ## Contributing
