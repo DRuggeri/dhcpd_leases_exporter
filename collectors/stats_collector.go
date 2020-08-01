@@ -4,6 +4,7 @@ import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 	"github.com/prometheus/client_golang/prometheus"
 	"time"
+	"sync"
 )
 
 type StatCollector struct {
@@ -12,6 +13,7 @@ type StatCollector struct {
 	countDesc   *prometheus.Desc
 	modTimeDesc *prometheus.Desc
 	info        *dhcpdleasesreader.DhcpdInfo
+	mux	*sync.Mutex
 
 	scrapesTotalMetric      prometheus.Counter
 	scrapeErrorsTotalMetric prometheus.Counter
@@ -20,7 +22,7 @@ type StatCollector struct {
 	lastScrapeDurationDesc  *prometheus.Desc
 }
 
-func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *StatCollector {
+func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo, mux *sync.Mutex) *StatCollector {
 	validDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "valid"),
 		"The number of leases in dhcpd.leases that have not yet expired",
 		nil, nil,
@@ -80,6 +82,7 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 		countDesc:   countDesc,
 		modTimeDesc: modTimeDesc,
 		info:        info,
+		mux:	mux,
 
 		scrapesTotalMetric:      scrapesTotalMetric,
 		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,
@@ -92,6 +95,9 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *Sta
 func (c *StatCollector) Collect(ch chan<- prometheus.Metric) {
 	var begun = time.Now()
 	err_num := 0
+
+        c.mux.Lock()
+        defer c.mux.Unlock()
 
 	/* TODO: Surface read errors through this function */
 	c.info.Read()

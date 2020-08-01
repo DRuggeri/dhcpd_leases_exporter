@@ -4,11 +4,13 @@ import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 	"github.com/prometheus/client_golang/prometheus"
 	"time"
+	"sync"
 )
 
 type leaseCollector struct {
 	activeDesc *prometheus.Desc
 	info       *dhcpdleasesreader.DhcpdInfo
+	mux	*sync.Mutex
 
 	scrapesTotalMetric      prometheus.Counter
 	scrapeErrorsTotalMetric prometheus.Counter
@@ -17,7 +19,7 @@ type leaseCollector struct {
 	lastScrapeDurationDesc  *prometheus.Desc
 }
 
-func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *leaseCollector {
+func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo, mux *sync.Mutex) *leaseCollector {
 	activeDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "active", "client"),
 		"The number of leases in dhcpd.leases that have not yet expired",
 		[]string{"hostname", "ip", "mac"}, nil,
@@ -59,6 +61,7 @@ func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *lea
 	return &leaseCollector{
 		activeDesc: activeDesc,
 		info:       info,
+		mux:	mux,
 
 		scrapesTotalMetric:      scrapesTotalMetric,
 		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,
@@ -71,6 +74,9 @@ func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo) *lea
 func (c *leaseCollector) Collect(ch chan<- prometheus.Metric) {
 	var begun = time.Now()
 	err_num := 0
+
+	c.mux.Lock()
+	defer c.mux.Unlock()
 
 	/* TODO: Surface read errors through this function */
 	c.info.Read()

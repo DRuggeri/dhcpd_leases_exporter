@@ -24,7 +24,7 @@ func TestSuccessfulLaunch(t *testing.T) {
 		}
 	*/
 
-	exporter := exec.Command(binary, "--web.listen-address", address)
+	exporter := exec.Command(binary, "--web.listen-address", address, "--dhcpd.leases", "leases.test")
 	test := func(pid int) error {
 		if err := queryExporter(address); err != nil {
 			return err
