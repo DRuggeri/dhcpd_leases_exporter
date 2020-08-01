@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -98,6 +99,7 @@ func main() {
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 
+	var mux = &sync.Mutex{}
 	info, err := dhcpdleasesreader.NewDhcpdInfo(*dhcpdLeasesFile, false)
 	if err != nil {
 		log.Error(err)
@@ -124,14 +126,14 @@ func main() {
 		   - When the describe function exits after returning the last item, close the channel to end the background consume function
 		*/
 		fmt.Println("Stats")
-		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info)
+		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info, mux)
 		out = make(chan *prometheus.Desc)
 		go eatOutput(out)
 		statsCollector.Describe(out)
 		close(out)
 
 		fmt.Println("Leases")
-		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, info)
+		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, info, mux)
 		out = make(chan *prometheus.Desc)
 		go eatOutput(out)
 		leasesCollector.Describe(out)
@@ -155,7 +157,7 @@ func main() {
 	}
 
 	if collectorsFilter.Enabled(filters.StatsCollector) {
-		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info)
+		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info, mux)
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
@@ -164,7 +166,7 @@ func main() {
 	}
 
 	if collectorsFilter.Enabled(filters.LeaseCollector) {
-		activeCollector := collectors.NewLeaseCollector(*metricsNamespace, info)
+		activeCollector := collectors.NewLeaseCollector(*metricsNamespace, info, mux)
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
