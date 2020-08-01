@@ -3,14 +3,14 @@ package collectors
 import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 	"github.com/prometheus/client_golang/prometheus"
-	"time"
 	"sync"
+	"time"
 )
 
 type leaseCollector struct {
 	activeDesc *prometheus.Desc
 	info       *dhcpdleasesreader.DhcpdInfo
-	mux	*sync.Mutex
+	mux        *sync.Mutex
 
 	scrapesTotalMetric      prometheus.Counter
 	scrapeErrorsTotalMetric prometheus.Counter
@@ -61,7 +61,7 @@ func NewLeaseCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo, mux 
 	return &leaseCollector{
 		activeDesc: activeDesc,
 		info:       info,
-		mux:	mux,
+		mux:        mux,
 
 		scrapesTotalMetric:      scrapesTotalMetric,
 		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,

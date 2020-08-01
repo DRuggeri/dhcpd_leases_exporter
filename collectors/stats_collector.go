@@ -3,8 +3,8 @@ package collectors
 import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 	"github.com/prometheus/client_golang/prometheus"
-	"time"
 	"sync"
+	"time"
 )
 
 type StatCollector struct {
@@ -13,7 +13,7 @@ type StatCollector struct {
 	countDesc   *prometheus.Desc
 	modTimeDesc *prometheus.Desc
 	info        *dhcpdleasesreader.DhcpdInfo
-	mux	*sync.Mutex
+	mux         *sync.Mutex
 
 	scrapesTotalMetric      prometheus.Counter
 	scrapeErrorsTotalMetric prometheus.Counter
@@ -82,7 +82,7 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo, mux 
 		countDesc:   countDesc,
 		modTimeDesc: modTimeDesc,
 		info:        info,
-		mux:	mux,
+		mux:         mux,
 
 		scrapesTotalMetric:      scrapesTotalMetric,
 		scrapeErrorsTotalMetric: scrapeErrorsTotalMetric,
@@ -96,8 +96,8 @@ func (c *StatCollector) Collect(ch chan<- prometheus.Metric) {
 	var begun = time.Now()
 	err_num := 0
 
-        c.mux.Lock()
-        defer c.mux.Unlock()
+	c.mux.Lock()
+	defer c.mux.Unlock()
 
 	/* TODO: Surface read errors through this function */
 	c.info.Read()
