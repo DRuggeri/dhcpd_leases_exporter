@@ -1,0 +1,57 @@
+lease 192.168.0.196 {
+  starts 6 2020/08/01 22:44:15;
+  ends 6 2020/08/01 22:54:15;
+  cltt 6 2020/08/01 22:44:15;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 4c:ef:c0:2c:97:da;
+  set ddns-rev-name = "196.0.168.192.in-addr.arpa.";
+  set ddns-dhcid = "\000\000\001\"G\006Bmb\216k\310v\205\312!P\240\311[0(\216\362\222. {\213\2309\207\326\373\225";
+  set ddns-fwd-name = "amazon-c44eb4933.dhcp.home.bitnebula.com.";
+  set vendor-class-identifier = "dhcpcd-5.5.6";
+  client-hostname "amazon-c44eb4933";
+}
+lease 192.168.0.154 {
+  starts 6 2020/08/01 22:44:30;
+  ends 6 2020/08/01 22:54:30;
+  cltt 6 2020/08/01 22:44:30;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet fc:a6:67:54:63:35;
+  set ddns-rev-name = "154.0.168.192.in-addr.arpa.";
+  set ddns-dhcid = "\000\000\001dp\303\255\210\376\272\253Z\013\006;_\200w,D\305\033{\266%\330\237\301&\313\347)>\270w";
+  set ddns-fwd-name = "amazon-31ad10209.dhcp.home.bitnebula.com.";
+  set vendor-class-identifier = "dhcpcd-5.5.6";
+  client-hostname "amazon-31ad10209";
+}
+lease 192.168.0.236 {
+  starts 6 2020/08/01 22:44:34;
+  ends 6 2020/08/01 22:54:34;
+  cltt 6 2020/08/01 22:44:34;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 44:00:49:1c:0f:1e;
+  set ddns-rev-name = "236.0.168.192.in-addr.arpa.";
+  set ddns-dhcid = "\000\000\001m[\036\223m\277\232Lz\023Y\005\350\320?\331\326\3027\034\2504\351|\330^\010\314\251!\252r";
+  set ddns-fwd-name = "amazon-2f4ac0346.dhcp.home.bitnebula.com.";
+  set vendor-class-identifier = "dhcpcd-5.5.6";
+  client-hostname "amazon-2f4ac0346";
+}
+lease 192.168.0.170 {
+  starts 6 2020/08/01 22:44:36;
+  ends 6 2020/08/01 22:54:36;
+  cltt 6 2020/08/01 22:44:36;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 08:a6:bc:53:24:a4;
+  uid "\001\010\246\274S$\244";
+  set ddns-rev-name = "170.0.168.192.in-addr.arpa.";
+  set ddns-dhcid = "\000\001\001\361\251-\033=hP\272\323v\213i\311y\373\201\253\277#\023\226\307%}\247zpB\242\254\026\370";
+  set ddns-fwd-name = "amazon-ad4ce45b0.dhcp.home.bitnebula.com.";
+  set vendor-class-identifier = "android-dhcp-7.1.2";
+  client-hostname "amazon-ad4ce45b0";
+}
