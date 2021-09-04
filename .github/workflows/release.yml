@@ -31,8 +31,9 @@ jobs:
 
       - name: Test
         run: |
-          find .
           go build
+          echo "Build complete - attempting test..."
+          find .
           go test ./...
 
   release:
