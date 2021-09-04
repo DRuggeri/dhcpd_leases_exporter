@@ -22,10 +22,11 @@ $ dhcpd_leases_exporter <flags>
 ```
 
 ### With Docker
-```bash
-docker build -t dhcpd_leases_exporter .
-docker run -d -p 9198:9198 -v /var/lib/dhcp:/var/lib/dhcpd:ro dhcpd_leases_exporter"
-```
+An official scratch-based Docker image is built with every tag and pushed to DockerHub and ghcr. Additionally, PRs will be tested by GitHubs actions.
+
+The following images are available for use:
+- [druggeri/dhcpd_leases_exporter](https://hub.docker.com/r/druggeri/dhcpd_leases_exporter)
+- [ghcr.io/DRuggeri/dhcpd_leases_exporter](https://ghcr.io/DRuggeri/dhcpd_leases_exporter)
 
 ## Usage
 

@@ -10,7 +10,7 @@ export GOARCH=""
 #Add this directory to PATH
 export PATH="$PATH:`pwd`"
 
-go build -o "dhcpd_leases_exporter" ../
+go build -ldflags "-X main.Version=testing:$(git rev-list -1 HEAD)" -o "dhcpd_leases_exporter" ../
 
 echo "Running tests..."
 cd ../

@@ -18,6 +18,8 @@ import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 )
 
+var Version string
+
 var (
 	dhcpdLeasesFile = kingpin.Flag(
 		"dhcpd.leases", "Path of the dhcpd.leases file. Defaults to '/var/lib/dhcp/dhcpd.leases' ($DHCPD_LEASES_EXPORTER_LEASES_FILE)",
@@ -95,7 +97,7 @@ func prometheusHandler() http.Handler {
 
 func main() {
 	log.AddFlags(kingpin.CommandLine)
-	kingpin.Version(version.Print("dhcpd_leases_exporter"))
+	kingpin.Version(Version)
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 
@@ -142,8 +144,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	log.Infoln("Starting dhcpd_leases_exporter", version.Info())
-	log.Infoln("Build context", version.BuildContext())
+	log.Infoln("Starting dhcpd_leases_exporter", Version)
 	authPassword = os.Getenv("DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD")
 
 	var collectorsFilters []string
