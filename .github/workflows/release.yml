@@ -30,11 +30,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test
-        run: |
-          go build
-          echo "Build complete - attempting test..."
-          find .
-          go test ./...
+        run: go test ./...
 
   release:
     needs: test
