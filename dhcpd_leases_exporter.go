@@ -18,7 +18,7 @@ import (
 	"github.com/DRuggeri/dhcpdleasesreader"
 )
 
-var Version string
+var Version = "testing"
 
 var (
 	dhcpdLeasesFile = kingpin.Flag(
