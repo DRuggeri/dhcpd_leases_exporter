@@ -123,6 +123,7 @@ func (c *StatCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.validDesc
 	ch <- c.expiredDesc
 	ch <- c.countDesc
+	ch <- c.modTimeDesc
 
 	c.scrapesTotalMetric.Describe(ch)
 	c.scrapeErrorsTotalMetric.Describe(ch)
