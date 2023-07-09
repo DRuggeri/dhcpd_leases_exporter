@@ -101,13 +101,6 @@ func main() {
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 
-	var mux = &sync.Mutex{}
-	info, err := dhcpdleasesreader.NewDhcpdInfo(*dhcpdLeasesFile, false)
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-
 	if *dhcpdLeasesPrintMetrics {
 		/* Make a channel and function to send output along */
 		var out chan *prometheus.Desc
@@ -130,7 +123,8 @@ func main() {
 		   - When the describe function exits after returning the last item, close the channel to end the background consume function
 		*/
 		fmt.Println("Stats")
-		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info, mux)
+		// Skip mutex and DhcpdInfo; they aren't needed just to Describe the metrics
+		statsCollector := collectors.NewStatsCollector(*metricsNamespace, nil, nil)
 		out = make(chan *prometheus.Desc)
 		wg.Add(1)
 		go eatOutput(out)
@@ -140,7 +134,8 @@ func main() {
 		wg.Wait()
 
 		fmt.Println("Leases")
-		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, info, mux)
+		// Skip mutex and DhcpdInfo; they aren't needed just to Describe the metrics
+		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, nil, nil)
 		out = make(chan *prometheus.Desc)
 		wg.Add(1)
 		go eatOutput(out)
@@ -150,6 +145,13 @@ func main() {
 		wg.Wait()
 
 		os.Exit(0)
+	}
+
+	var mux = &sync.Mutex{}
+	info, err := dhcpdleasesreader.NewDhcpdInfo(*dhcpdLeasesFile, false)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
 	}
 
 	log.Infoln("Starting dhcpd_leases_exporter", Version)
