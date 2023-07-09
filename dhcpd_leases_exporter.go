@@ -111,7 +111,9 @@ func main() {
 	if *dhcpdLeasesPrintMetrics {
 		/* Make a channel and function to send output along */
 		var out chan *prometheus.Desc
+		var wg sync.WaitGroup
 		eatOutput := func(in <-chan *prometheus.Desc) {
+			defer wg.Done()
 			for desc := range in {
 				/* Weaksauce... no direct access to the variables */
 				//Desc{fqName: "the_name", help: "help text", constLabels: {}, variableLabels: []}
@@ -130,16 +132,22 @@ func main() {
 		fmt.Println("Stats")
 		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info, mux)
 		out = make(chan *prometheus.Desc)
+		wg.Add(1)
 		go eatOutput(out)
 		statsCollector.Describe(out)
 		close(out)
+		// Ensure the goroutine has finished printing
+		wg.Wait()
 
 		fmt.Println("Leases")
 		leasesCollector := collectors.NewLeaseCollector(*metricsNamespace, info, mux)
 		out = make(chan *prometheus.Desc)
+		wg.Add(1)
 		go eatOutput(out)
 		leasesCollector.Describe(out)
 		close(out)
+		// Ensure the goroutine has finished printing
+		wg.Wait()
 
 		os.Exit(0)
 	}
