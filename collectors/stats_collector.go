@@ -29,7 +29,7 @@ func NewStatsCollector(namespace string, info *dhcpdleasesreader.DhcpdInfo, mux 
 	)
 
 	expiredDesc := prometheus.NewDesc(prometheus.BuildFQName(namespace, "stats", "expired"),
-		"The number of leases in dhcpd.leases that have xpired",
+		"The number of leases in dhcpd.leases that have expired",
 		nil, nil,
 	)
 
@@ -123,6 +123,7 @@ func (c *StatCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.validDesc
 	ch <- c.expiredDesc
 	ch <- c.countDesc
+	ch <- c.modTimeDesc
 
 	c.scrapesTotalMetric.Describe(ch)
 	c.scrapeErrorsTotalMetric.Describe(ch)
