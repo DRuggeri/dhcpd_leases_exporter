@@ -6,5 +6,6 @@ require (
 	github.com/DRuggeri/dhcpdleasesreader v0.0.0-20200525013329-49a203fff0b3
 	github.com/prometheus/client_golang v1.6.0
 	github.com/prometheus/common v0.10.0
+	golang.org/x/sys v0.24.0 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
