@@ -55,11 +55,14 @@ Flags:
       --web.tls.key_file=WEB.TLS.KEY_FILE
                           Path to a file that contains the TLS private key (PEM format) ($DHCPD_LEASES_EXPORTER_WEB_TLS_KEYFILE)
       --printMetrics      Print the metrics this exporter exposes and exits. Default: false ($DHCPD_LEASES_EXPORTER_PRINT_METRICS)
-      --log.level="info"  Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal]
-      --log.format="logger:stderr"
-                          Set the log target and format. Example: "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
+      --log.level="info"  Only log messages with the given severity or above. One of: [debug, info, warn, error]
+      --log.format="logfmt"
+                          Output format of log messages. One of: [logfmt, json]
       --version           Show application version.
 ```
+
+Logs are written to stderr. The legacy `logger:...` format values, including
+syslog, eventlog, and stdout destinations, are no longer supported.
 
 ## Metrics
 

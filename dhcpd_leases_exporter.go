@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors/version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/common/log"
-	"github.com/prometheus/common/version"
+	"github.com/prometheus/common/promslog"
 	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/DRuggeri/dhcpd_leases_exporter/collectors"
@@ -19,6 +20,8 @@ import (
 )
 
 var Version = "testing"
+
+var logger = slog.Default()
 
 var (
 	dhcpdLeasesFile = kingpin.Flag(
@@ -72,7 +75,7 @@ type basicAuthHandler struct {
 func (h *basicAuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
 	if !ok || username != h.username || password != h.password {
-		log.Errorf("Invalid HTTP auth from `%s`", r.RemoteAddr)
+		logger.Error("Invalid HTTP auth", "remote_addr", r.RemoteAddr)
 		w.Header().Set("WWW-Authenticate", "Basic realm=\"metrics\"")
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
@@ -96,10 +99,15 @@ func prometheusHandler() http.Handler {
 }
 
 func main() {
-	log.AddFlags(kingpin.CommandLine)
+	logConfig := &promslog.Config{Level: promslog.NewLevel(), Format: promslog.NewFormat()}
+	kingpin.Flag("log.level", "Only log messages with the given severity or above. One of: [debug, info, warn, error]").
+		Default("info").SetValue(logConfig.Level)
+	kingpin.Flag("log.format", "Output format of log messages. One of: [logfmt, json]").
+		Default("logfmt").SetValue(logConfig.Format)
 	kingpin.Version(Version)
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
+	logger = promslog.New(logConfig)
 
 	if *dhcpdLeasesPrintMetrics {
 		/* Make a channel and function to send output along */
@@ -150,11 +158,11 @@ func main() {
 	var mux = &sync.Mutex{}
 	info, err := dhcpdleasesreader.NewDhcpdInfo(*dhcpdLeasesFile, false)
 	if err != nil {
-		log.Error(err)
+		logger.Error("Failed to read leases", "err", err)
 		os.Exit(1)
 	}
 
-	log.Infoln("Starting dhcpd_leases_exporter", Version)
+	logger.Info("Starting dhcpd_leases_exporter", "version", Version)
 	authPassword = os.Getenv("DHCPD_LEASES_EXPORTER_WEB_AUTH_PASSWORD")
 
 	var collectorsFilters []string
@@ -163,14 +171,14 @@ func main() {
 	}
 	collectorsFilter, err := filters.NewCollectorsFilter(collectorsFilters)
 	if err != nil {
-		log.Error(err)
+		logger.Error("Failed to configure collectors", "err", err)
 		os.Exit(1)
 	}
 
 	if collectorsFilter.Enabled(filters.StatsCollector) {
 		statsCollector := collectors.NewStatsCollector(*metricsNamespace, info, mux)
 		if err != nil {
-			log.Error(err)
+			logger.Error("Failed to configure stats collector", "err", err)
 			os.Exit(1)
 		}
 		prometheus.MustRegister(statsCollector)
@@ -179,7 +187,7 @@ func main() {
 	if collectorsFilter.Enabled(filters.LeaseCollector) {
 		activeCollector := collectors.NewLeaseCollector(*metricsNamespace, info, mux)
 		if err != nil {
-			log.Error(err)
+			logger.Error("Failed to configure leases collector", "err", err)
 			os.Exit(1)
 		}
 		prometheus.MustRegister(activeCollector)
@@ -198,10 +206,12 @@ func main() {
 	})
 
 	if *tlsCertFile != "" && *tlsKeyFile != "" {
-		log.Infoln("Listening TLS on", *listenAddress)
-		log.Fatal(http.ListenAndServeTLS(*listenAddress, *tlsCertFile, *tlsKeyFile, nil))
+		logger.Info("Listening with TLS", "address", *listenAddress)
+		err = http.ListenAndServeTLS(*listenAddress, *tlsCertFile, *tlsKeyFile, nil)
 	} else {
-		log.Infoln("Listening on", *listenAddress)
-		log.Fatal(http.ListenAndServe(*listenAddress, nil))
+		logger.Info("Listening", "address", *listenAddress)
+		err = http.ListenAndServe(*listenAddress, nil)
 	}
+	logger.Error("HTTP server stopped", "err", err)
+	os.Exit(1)
 }
